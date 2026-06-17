@@ -216,3 +216,15 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# AWS
+*.zip
+.aws-sam/
+
+# Node (for frontend later)
+node_modules/
+dist/
+
+# OS
+Thumbs.db
+.DS_Store
