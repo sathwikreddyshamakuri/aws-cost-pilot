@@ -4,12 +4,9 @@ from bedrock_service import analyze_costs
 from s3_service import save_results
 
 def lambda_handler(event, context):
+    method = event["requestContext"]["http"]["method"]
+    path = event["requestContext"]["http"]["path"]
 
-    # Step 1: Figure out what route was called
-    method = event["httpMethod"]        # "POST" or "GET"
-    path = event["path"]                # "/analyze" or "/results"
-
-    # Step 2: Route to the right logic
     if method == "POST" and path == "/analyze":
         return handle_analyze(event)
     elif method == "GET" and path == "/results":
@@ -17,21 +14,18 @@ def lambda_handler(event, context):
     else:
         return response(404, {"error": "Route not found"})
 
-
 def handle_analyze(event):
     import base64
 
-    # API Gateway sends binary files as Base64
-    file_data = base64.b64decode(event["body"])
-    file_type = event["headers"].get("Content-Type", "application/pdf")
+    if event.get("isBase64Encoded", False):
+        file_data = base64.b64decode(event["body"])
+    else:
+        file_data = event["body"].encode("utf-8")
 
-    # Step 3: Extract text from the PDF/CSV using Textract
+    file_type = event["headers"].get("content-type", "application/pdf")
+
     extracted_text = extract_text(file_data, file_type)
-
-    # Step 4: Send extracted text to Bedrock for cost analysis
     analysis = analyze_costs(extracted_text)
-
-    # Step 5: Save results to S3 so frontend can retrieve them later
     result_id = save_results(analysis)
 
     return response(200, {"result_id": result_id, "analysis": analysis})

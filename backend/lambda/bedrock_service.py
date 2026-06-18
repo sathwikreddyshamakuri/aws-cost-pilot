@@ -7,7 +7,7 @@ import os
 bedrock = boto3.client("bedrock-runtime")
 
 # Using Claude 3 Sonnet on Bedrock — good balance of speed and quality
-MODEL_ID = os.getenv("BEDROCK_MODEL_ID","anthropic.claude-3-sonnet-20240229-v1:0")
+MODEL_ID = os.getenv("BEDROCK_MODEL_ID","us.anthropic.claude-sonnet-4-5-20250929-v1:0")
 
 
 def analyze_costs(extracted_text):
@@ -16,7 +16,7 @@ def analyze_costs(extracted_text):
     # Bedrock uses a standard messages API similar to Anthropic's direct API
     body = {
         "anthropic_version": "bedrock-2023-05-31",
-        "max_tokens": 2048,
+        "max_tokens": 800,
         "messages": [
             {
                 "role": "user",
@@ -38,18 +38,31 @@ def analyze_costs(extracted_text):
 
 
 def build_prompt(extracted_text):
-    # A specific, structured prompt gets far better results than a vague one
-    return f"""You are an AWS cost optimization expert helping a Finance team.
+    return f"""You are an AWS cost optimization expert advising a Finance team. Time is limited, so be direct and skip preamble.
 
-Analyze the following AWS bill and provide:
-1. Top 3 most expensive services and what is driving their cost
-2. Any unusual spikes or patterns compared to typical usage
-3. Specific actionable recommendations to reduce costs
-4. Estimated monthly savings if recommendations are followed
+Analyze this AWS bill and respond in EXACTLY this format, with no extra commentary before or after:
 
-Format your response as structured sections with clear headings.
-Be specific — mention actual service names and dollar amounts from the bill.
+## Top Cost Drivers
+- [Service Name]: $[amount] — [cost driver in ≤10 words]
+- [Service Name]: $[amount] — [cost driver in ≤10 words]
+- [Service Name]: $[amount] — [cost driver in ≤10 words]
+
+## Key Concern
+[One sentence flagging the single biggest optimization opportunity]
+
+## Recommendations
+1. [Action] → Est. savings: $[amount]/month
+2. [Action] → Est. savings: $[amount]/month
+3. [Action] → Est. savings: $[amount]/month
+
+## Total Estimated Savings
+$[amount]/month ([percentage]% of current bill)
+
+Rules:
+- Each bullet/line must fit on one line — no sub-explanations, no paragraphs
+- Use only real numbers from the bill provided — never invent figures
+- Skip any service with cost under $5 unless it's the only option
 
 AWS Bill Data:
 {extracted_text}
-""" 
+"""
