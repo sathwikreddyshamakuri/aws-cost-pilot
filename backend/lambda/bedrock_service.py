@@ -4,7 +4,7 @@ import json
 import os
 
 # Bedrock runtime is separate from the main Bedrock client
-bedrock = boto3.client("bedrock-runtime", region_name="us-east-1")
+bedrock = boto3.client("bedrock-runtime")
 
 # Using Claude 3 Sonnet on Bedrock — good balance of speed and quality
 MODEL_ID = os.getenv("BEDROCK_MODEL_ID","anthropic.claude-3-sonnet-20240229-v1:0")

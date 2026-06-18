@@ -4,7 +4,7 @@ import json
 import uuid
 import os
 
-s3 = boto3.client("s3", region_name="us-east-1")
+s3 = boto3.client("s3")
 
 # Bucket name comes from environment — never hardcode bucket names
 BUCKET_NAME = os.getenv("S3_BUCKET_NAME", "aws-cost-pilot-results")

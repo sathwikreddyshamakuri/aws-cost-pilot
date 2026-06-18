@@ -3,7 +3,7 @@ import csv
 import io
 
 # boto3 is the AWS SDK for Python — this creates a Textract client
-textract = boto3.client("textract", region_name="us-east-1")
+textract = boto3.client("textract")
 
 def extract_text(file_data, content_type):
     if "csv" in content_type:

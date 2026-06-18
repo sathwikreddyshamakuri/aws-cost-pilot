@@ -221,6 +221,9 @@ __marimo__/
 *.zip
 .aws-sam/
 
+backend/lambda/package/
+backend/lambda/lambda_deployment.zip
+
 # Node (for frontend later)
 node_modules/
 dist/
