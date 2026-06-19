@@ -30,7 +30,6 @@ def handle_analyze(event):
 
     return response(200, {"result_id": result_id, "analysis": analysis})
 
-
 def handle_results(event):
     from s3_service import get_results
     from botocore.exceptions import ClientError
