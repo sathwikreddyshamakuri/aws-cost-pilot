@@ -8,10 +8,14 @@ from handler import lambda_handler
 
 # Fake event simulating what API Gateway would send for POST /analyze
 fake_event = {
-    "httpMethod": "POST",
-    "path": "/analyze",
+    "requestContext": {
+        "http": {
+            "method": "POST",
+            "path": "/analyze"
+        }
+    },
     "headers": {"Content-Type": "text/csv"},
-    "body": "U2VydmljZSxDb3N0"  # base64 for "Service,Cost" - fake content
+    "body": "U2VydmljZSxDb3N0..."
 }
 
 # Patch the real functions so they never actually run
